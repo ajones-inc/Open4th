@@ -16,23 +16,26 @@
 #include <string>
 
 
-// TCP Client
+// TCP Listener
 
-class TCPTransmitter
+class UDPReceiver
 {
 public:
-	TCPTransmitter() = default;
-	~TCPTransmitter() {}
+	UDPReceiver() = default;
+	~UDPReceiver() {}
 
 	bool Init();
 	void Shutdown();
 
-	void Connect(std::string ipAddress, int port);
-	void Disconnect() { closesocket(m_socket); }
+	void Listen(std::string ipAddress, int port);
+	void StopListening() { FD_CLR(m_socket, &m_master); closesocket(m_socket); }
 
-	void Send(std::string msg);
-	std::string Recieve(char buf[], int buf_Size);
-	std::string RecievePubKey(char buf[], int buf_Size);
+	void Accept(char buf[], int buf_Size);
+	void Disconnect(SOCKET client) { closesocket(client); }
+
+	void Send(sockaddr_in clientSocket, std::string msg);
+	std::string Recieve(SOCKET client, char buf[], int buf_Size);
+	std::string RecievePubKey(SOCKET client, char buf[], int buf_Size);
 
 	void OnUpdate();
 
@@ -44,8 +47,7 @@ public:
 	void SetIPPort(int port) { m_port = port; }
 private:
 	SOCKET m_socket = 0;
+	fd_set m_master;
 	std::string m_ipAddress = "";
 	int m_port = 0;
-	Open4_RSA m_rsa;
-	CryptoPP::RSA::PublicKey m_remotePublicKey;
 };

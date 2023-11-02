@@ -2,12 +2,14 @@
 #include <string>
 #include <vector>
 
+#define MAX_BUFFER_SIZE 1048576
+
 enum O4RequestMethods
 {
 	NONE = 0,
 	GET,
 	POST,
-	DELETE
+	REMOVE
 };
 
 class O4Request
